@@ -102,7 +102,6 @@ form.addEventListener('submit', async function(e) {
     }
 });
 
-// Optional: Add input validation feedback
 document.getElementById('age').addEventListener('input', function() {
     if (this.value < 18 || this.value > 100) {
         this.style.borderColor = '#ff5722';

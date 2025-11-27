@@ -6,10 +6,8 @@ import numpy as np
 
 app = Flask(__name__)
 
-# Sesuaikan path model Anda di sini
 MODEL_PATH = os.path.join(os.path.dirname(__file__), 'models', 'best_model.pkl')
 
-# Load model sekali saat startup
 try:
     model = joblib.load(MODEL_PATH)
     print(f"Model loaded: {type(model).__name__} from {MODEL_PATH}")
