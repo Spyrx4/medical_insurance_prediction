@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediksi Biaya Asuransi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-shield-alt icon"></i>Prediksi Biaya Asuransi</h1>
+        <p class="subtitle">Masukkan data Anda untuk menghitung estimasi biaya asuransi dengan AI Explanation</p>
+
+        <form id="insuranceForm">
+            <div class="form-group">
+                <label for="age"><i class="fas fa-calendar icon"></i>Usia (Tahun)</label>
+                <input type="number" id="age" min="18" max="100" value="30" required>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-venus-mars icon"></i>Jenis Kelamin</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="male" name="sex" value="male" checked>
+                        <label for="male">Pria</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="female" name="sex" value="female">
+                        <label for="female">Wanita</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="bmi"><i class="fas fa-weight icon"></i>BMI (Body Mass Index)</label>
+                <div class="range-container">
+                    <input type="range" id="bmi" min="15" max="50" value="25" step="0.1">
+                    <span class="range-value" id="bmiValue">25.0</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="children"><i class="fas fa-child icon"></i>Jumlah Anak</label>
+                <input type="number" id="children" min="0" max="10" value="0" required>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-smoking icon"></i>Status Merokok</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="smokerYes" name="smoker" value="yes">
+                        <label for="smokerYes">Ya</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="smokerNo" name="smoker" value="no" checked>
+                        <label for="smokerNo">Tidak</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="region"><i class="fas fa-map-marker-alt icon"></i>Region</label>
+                <select id="region" required>
+                    <option value="southwest">Southwest</option>
+                    <option value="southeast">Southeast</option>
+                    <option value="northwest">Northwest</option>
+                    <option value="northeast">Northeast</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-predict">
+                <i class="fas fa-calculator icon"></i>Hitung Prediksi
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <i class="fas fa-spinner fa-spin"></i> Menghitung prediksi...
+        </div>
+
+        <div class="result" id="result">
+            <h2>Estimasi Biaya Asuransi Tahunan</h2>
+            <div class="amount" id="amount">$0</div>
+            <div class="risk-info" id="riskInfo">
+                <span class="risk-badge" id="riskBadge"></span>
+                <span class="bmi-badge" id="bmiBadge"></span>
+            </div>
+            <p class="note">*Ini adalah estimasi dan bukan penawaran resmi</p>
+        </div>
+
+        <div class="explanation" id="explanation">
+            <h3><i class="fas fa-robot icon"></i> Penjelasan AI</h3>
+            <div class="explanation-content" id="explanationText">
+                Menunggu penjelasan AI...
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

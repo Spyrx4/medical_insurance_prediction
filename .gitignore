@@ -1,0 +1,8 @@
+.env
+rag_system.py
+app_with_ai.py
+model_predictor.py
+medical_insurance_prediction1.ipynb
+chroma_db/
+.idea/
+__pycache__/
