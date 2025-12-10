@@ -4,6 +4,11 @@ import pandas as pd
 import os
 import numpy as np
 
+try:
+    from featureEngineering import InsuranceFeatureEngineer
+except ImportError:
+    pass # Abaikan jika tidak menggunakan file terpisah (tapi sangat disarankan)
+
 app = Flask(__name__)
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), 'models', 'best_model.pkl')
@@ -27,33 +32,7 @@ def predict():
     try:
         data = request.get_json(force=True)
 
-        def create_risk_levels(df):
-            df = df.copy()
-
-            # Risk level 0-3
-            conditions = [
-                (df['smoker'] == 'yes') & (df['bmi'] > 30),  
-                (df['smoker'] == 'yes') & (df['bmi'] <= 30),
-                (df['smoker'] == 'no') & (df['bmi'] > 30),  
-                (df['smoker'] == 'no') & (df['bmi'] <= 30)
-            ]
-
-            levels = [3, 2, 1, 0]
-
-            df['risk_level'] = np.select(conditions, levels, default=0)
-
-            return df
-
-        def cat_bmi(bmi):
-            if bmi < 18.5:
-                return 'Underweight'
-            elif 18.5 <= bmi < 24.9:
-                return 'Healthy weight'
-            elif 25 <= bmi < 29.9:
-                return 'Overweight'
-            else:
-                return 'Obesity'
-
+        # 1. Siapkan Data Row (Sesuai variable Anda)
         row = {
             'age': int(data.get('age', 0)),
             'sex': data.get('sex', ''),
@@ -62,15 +41,44 @@ def predict():
             'smoker': data.get('smoker', ''),
             'region': data.get('region', '')
         }
-        X = pd.DataFrame([row])
-        X['smoker'] = X['smoker'].apply(lambda x: 1 if x == 'yes' else 0)
-        X = create_risk_levels(X)
-        X['bmi_category'] = X['bmi'].apply(cat_bmi)
 
+        # 2. Buat DataFrame Raw (Data Mentah)
+        # Pipeline akan otomatis memproses feature engineering di dalam sini
+        X = pd.DataFrame([row])
+        
+        # 3. Prediksi (Variable Anda)
         preds = model.predict(X)
         final_cost = float(preds[0])
 
-        return jsonify({'success': True, 'cost': round(final_cost, 2)})
+        # --- LOGIKA TAMBAHAN UNTUK UI (BADGE) ---
+        bmi_val = row['bmi']
+        if bmi_val < 18.5: bmi_cat = 'Underweight'
+        elif 18.5 <= bmi_val < 24.9: bmi_cat = 'Healthy weight'
+        elif 25 <= bmi_val < 29.9: bmi_cat = 'Overweight'
+        else: bmi_cat = 'Obesity'
+
+        # Hitung Risk Level untuk UI
+        smoker_val = row['smoker']
+        if smoker_val == 'yes' and bmi_val > 30:
+            risk_text = "Extreme Risk" # 3
+            risk_val = 3
+        elif smoker_val == 'yes' and bmi_val <= 30:
+            risk_text = "High Risk" # 2
+            risk_val = 2
+        elif smoker_val == 'no' and bmi_val > 30:
+            risk_text = "Medium Risk" # 1
+            risk_val = 1
+        else:
+            risk_text = "Low Risk" # 0
+            risk_val = 0
+
+        return jsonify({
+            'success': True, 
+            'prediction': round(final_cost, 2), 
+            'bmi_category': bmi_cat,
+            'risk_level': risk_text,
+            'risk_val': risk_val
+        })
 
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 400

@@ -58,7 +58,7 @@ form.addEventListener('submit', async function(e) {
 
         if (result.success) {
             // Display cost
-            amountDiv.textContent = '$' + result.cost.toLocaleString('en-US', {
+            amountDiv.textContent = '$' + result.prediction.toLocaleString('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
@@ -66,11 +66,22 @@ form.addEventListener('submit', async function(e) {
             // Display risk level badge
             const riskLabels = ['Rendah', 'Sedang', 'Tinggi', 'Sangat Tinggi'];
             const riskColors = ['#4caf50', '#ff9800', '#ff5722', '#d32f2f'];
-            riskBadge.textContent = `Risk Level: ${result.risk_level} (${riskLabels[result.risk_level]})`;
-            riskBadge.style.background = riskColors[result.risk_level];
+            riskBadge.textContent = `Risk Level: ${result.risk_level} (${riskLabels[result.risk_val]})`;
+            riskBadge.style.background = riskColors[result.risk_val];
             
             // Display BMI category badge
             bmiBadge.textContent = `BMI: ${result.bmi_category}`;
+            let bmiColor = '#4caf50';
+            if (result.bmi_category === 'Underweight') {
+                bmiColor = '#2196f3';
+            } else if (result.bmi_category === 'Healthy weight') {
+                bmiColor = '#4caf50';
+            } else if (result.bmi_category === 'Overweight') {
+                bmiColor = '#ff9800';
+            } else {
+                bmiColor = '#ff5722';
+            }
+            bmiBadge.style.background = bmiColor;
             
             // Show result
             resultDiv.style.display = 'block';
